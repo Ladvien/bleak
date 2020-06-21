@@ -27,3 +27,16 @@ async def test_with(discover):
 
     # Out of scope.  Should have disconnected 
     assert False == await client.is_connected() 
+
+@pytest.mark.async_timeout(60)
+async def test_connection_after_with(discover):
+    async with bleak.BleakClient(discover) as client:
+        assert await client.is_connected()
+
+    client = bleak.BleakClient(discover)
+    assert await client.connect()
+    assert await client.is_connected()
+    await client.disconnect()
+    assert not await client.is_connected()
+
+
